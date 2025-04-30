@@ -1,0 +1,130 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #FFA955;
+    color: black;
+}
+
+a:hover{
+    cursor: pointer;
+}
+
+.navbar-top{
+    display: flex;
+    background-color: #FFD63A;
+    align-items: center;
+    grid-gap: 2em;
+    padding: 20px;
+    font-size: 40px;
+    font-weight: bold;
+    border-bottom: 1px solid black;
+}
+
+.menu-icon{
+    font-size: 50px;
+    padding: 10px;
+    border-radius: 100%;
+    background-color: white;
+    transition: all 0.5s ease;
+}
+
+.menu-icon.bx-x{
+    transform: rotate(-180deg);
+}
+
+.menu-icon:hover{
+    cursor: pointer;
+}
+
+.main-container{
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.sidebar{
+    width: 100px;
+    text-align: center;
+    background: #FFD63A;
+    min-height: 100vh;
+}
+
+.sidebar.open{
+    width: 200px;
+    transition: width 0.5s ease;
+}
+
+.sidebar a{
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: black;
+    font-size: 50px;
+    margin-bottom: 2em;
+    width: 100%;
+}
+
+.sidebar.open a{
+    font-size: 30px;
+    transition: all 0.5s ease;
+}
+
+.sidebar a.active{
+    color: white;
+    border-right: 5px solid white;
+}
+
+.sidebar a p {
+    display: none;
+}
+
+.sidebar.open a p {
+    display: block;
+}
+
+.content{
+    width: calc(100% - 100px);
+}
+
+.content.open{
+    width: calc(100% - 200px);
+    transition: all 0.5s ease;
+}
+
+
+@media(max-width:1200px){
+    .navbar-top{
+        font-size: 1.3rem;
+        padding: 1rem;
+    }
+    .menu-icon{
+        font-size: 1.5rem;
+        padding: 0.75rem;
+    }
+    .sidebar{
+        width: 3rem;
+    }
+    .sidebar.open{
+        width: 5rem;
+    }
+    .sidebar a{
+        font-size: 1.5rem;
+        padding: 1rem;
+    }
+    .sidebar.open a{
+        font-size: 1rem;
+    }
+    .content{
+        width: calc(100% - 3rem);
+    }
+    .content.open{
+        width: calc(100% - 5rem);
+        transition: all 0.5s ease;
+    }
+}

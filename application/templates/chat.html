@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Chat{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="../static/chat.css">
+{% endblock %}
+
+{% block content %}
+<p class="heading">Chat</p>
+<div class="chat-container">
+    <div class="chat-box" id="chat-box"></div>
+    <div class="load">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+    <div class="chat-input-container">
+        <input type="text" id="user-input" placeholder="Type your message here...">
+        <button id="send-button">Send</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block content_open %}
+<p class="heading">Chat</p>
+<div class="chat-container">
+    <div class="chat-box" id="chat-box"></div>
+    <div class="load">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+    <div class="chat-input-container">
+        <input type="text" id="user-input" placeholder="Type your message here...">
+        <button id="send-button">Send</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+    <script src="../static/chat.js"></script>
+{% endblock %}

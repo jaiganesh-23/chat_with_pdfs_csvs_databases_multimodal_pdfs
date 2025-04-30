@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="../static/home.css">
+{% endblock %}
+
+{% block content %}
+<p class="heading">Upload Your Files, Prepare your chatbot and wait for confirmation</p>
+
+<div class="pdfs">
+    <p class="pdfs-header">PDFs</p>
+    <div class="pdf-upload">
+        <i class='pdf-upload-icon bx bxs-file-plus'></i>
+        <input type="file" id="pdf-file" name="pdf-file">
+        <input type="text" id="pdf-description" name="pdf-description" placeholder="A small description of the pdf">
+        <button id="upload-pdf">Upload</button>
+    </div>
+    <p class="pdfs-list-header">Uploaded PDFs</p>
+    <div class="pdfs-list">
+        
+    </div>
+</div>
+
+<div class="csvs">
+    <p class="csvs-header">CSVs / XLSXs</p>
+    <div class="csv-upload">
+        <i class='csv-upload-icon bx bxs-file-plus'></i>
+        <input type="file" id="csv-file" name="csv-file">
+        <input type="text" id="csv-description" name="csv-description" placeholder="A small description of the csv/xlsx">
+        <button id="upload-csv">Upload</button>
+    </div>
+    <p class="csvs-list-header">Uploaded CSVs / XLSXs</p>
+    <div class="csvs-list">
+        
+    </div>
+</div>
+
+<div class="dbs">
+    <p class="dbs-header">Databases(Sqlite)</p>
+    <div class="db-upload">
+        <i class='db-upload-icon bx bxs-file-plus'></i>
+        <input type="file" id="db-file" name="db-file">
+        <input type="text" id="db-description" name="db-description" placeholder="A small description of the db">
+        <button id="upload-db">Upload</button>
+    </div>
+    <p class="dbs-list-header">Uploaded databases</p>
+    <div class="dbs-list">
+        
+    </div>
+</div>
+
+<button class="prepare-button">Prepare Chatbot</button>
+{% endblock %}
+
+{% block content_open %}
+<p class="heading">Upload Your Files, Prepare your chatbot and wait for confirmation</p>
+
+<div class="pdfs">
+    <p class="pdfs-header">PDFs</p>
+    <div class="pdf-upload">
+        <i class='pdf-upload-icon bx bxs-file-plus'></i>
+        <input type="file" id="pdf-file" name="pdf-file">
+        <input type="text" id="pdf-description" name="pdf-description" placeholder="A small description of the pdf">
+        <button id="upload-pdf">Upload</button>
+    </div>
+    <p class="pdfs-list-header">Uploaded PDFs</p>
+    <div class="pdfs-list">
+        
+    </div>
+</div>
+
+<div class="csvs">
+    <p class="csvs-header">CSVs / XLSXs</p>
+    <div class="csv-upload">
+        <i class='csv-upload-icon bx bxs-file-plus'></i>
+        <input type="file" id="csv-file" name="csv-file">
+        <input type="text" id="csv-description" name="csv-description" placeholder="A small description of the csv/xlsx">
+        <button id="upload-csv">Upload</button>
+    </div>
+    <p class="csvs-list-header">Uploaded CSVs / XLSXs</p>
+    <div class="csvs-list">
+        
+    </div>
+</div>
+
+<div class="dbs">
+    <p class="dbs-header">Databases(Sqlite)</p>
+    <div class="db-upload">
+        <i class='db-upload-icon bx bxs-file-plus'></i>
+        <input type="file" id="db-file" name="db-file">
+        <input type="text" id="db-description" name="db-description" placeholder="A small description of the db">
+        <button id="upload-db">Upload</button>
+    </div>
+    <p class="dbs-list-header">Uploaded databases</p>
+    <div class="dbs-list">
+        
+    </div>
+</div>
+
+<button class="prepare-button">Prepare Chatbot</button>
+{% endblock %}
+
+{% block content_end %}
+<div id="overlay"></div>
+<div id="popup">
+    <div class="loader"></div>
+    <p class="popup-preparing-text">Preparing your chatbot...</p>
+    <p class="popup-response-text"></p>
+    <button class="popup-button">Close</button>
+</div>
+{% endblock %}
+
+
+{% block script %}
+    <script src="../static/home.js"></script>
+{% endblock %}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../static/base.css">
+    {% block css %}{% endblock %}
+</head>
+<body>
+    <div class="navbar-top">
+        {% if "sidebar" not in session or session["sidebar"] == False %}
+            <i class='menu-icon bx bx-menu'></i>
+        {% else %}
+            <i class='menu-icon bx bx-x'></i>
+        {% endif %}
+        <p>Chat With PDFS, CSVs/XLSXs and Databases(Multimodal PDFs)</p>
+    </div>
+    <div class="main-container">
+        {% if "sidebar" not in session or session["sidebar"] == False %}
+            <div class="sidebar">
+                {% if active == "home" %}
+                    <a href="/" class="active"><i class='bx bxs-folder-plus'></i><p>Upload</p></a>
+                {% else %}
+                    <a href="/"><i class='bx bxs-folder-plus'></i><p>Upload</p></a>
+                {% endif %}
+                {% if active == "chat" %}
+                    <a href="/chat" class="active"><i class='bx bxs-chat'></i><p>Chat</p></a>
+                {% else %}
+                    <a href="/chat"><i class='bx bxs-chat'></i><p>Chat</p></a>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="sidebar open">
+                {% if active == "home" %}
+                    <a href="/" class="active"><i class='bx bxs-folder-plus'></i><p>Upload</p></a>
+                {% else %}
+                    <a href="/"><i class='bx bxs-folder-plus'></i><p>Upload</p></a>
+                {% endif %}
+                {% if active == "chat" %}
+                    <a href="/chat" class="active"><i class='bx bxs-chat'></i><p>Chat</p></a>
+                {% else %}
+                    <a href="/chat"><i class='bx bxs-chat'></i><p>Chat</p></a>
+                {% endif %}
+            </div>
+        {% endif %}
+        {% if "sidebar" not in session or session["sidebar"] == False %}
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        {% else %}
+            <div class="content open">
+                {% block content_open %}{% endblock %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% block content_end %}{% endblock %}
+    {% block script %}{% endblock %}
+</body>
+</html>
