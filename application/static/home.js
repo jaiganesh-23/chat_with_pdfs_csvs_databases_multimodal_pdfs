@@ -15,6 +15,36 @@ menu_icon.addEventListener("click", async function () {
     });
 });
 
+function makeRequest(method, url, data, loading_div, loading_text) {
+    return new Promise(function (resolve, reject) {
+        let xhr = new XMLHttpRequest();
+        xhr.open(method, url);
+        xhr.upload.onprogress = function(event){
+            let percentComplete = (event.loaded / event.total) * 100;
+            loading_div.style.setProperty('--progress', percentComplete + '%');
+            loading_text.textContent = `${Math.round(percentComplete)}%`;
+        }
+        xhr.onload = function () {
+            if (this.status >= 200 && this.status < 300) {
+                resolve(xhr.response);
+            } else {
+                reject({
+                    status: this.status,
+                    message: xhr.statusText
+                });
+            }
+        };
+        xhr.onerror = function () {
+            reject({
+                status: this.status,
+                message: xhr.statusText
+            });
+        };
+        xhr.send(data);
+    });
+}
+
+let uploading = false;
 uploaded_pdfs = [];
 uploaded_csvs = [];
 uploaded_dbs = [];
@@ -31,7 +61,9 @@ async function getfiles(){
     for (file of files) {  
         if (file.fileType == "pdf") {
             let new_div = document.createElement("div");
+            let new_div_wrapper = document.createElement("div");
             new_div.classList.add("pdf");
+            new_div_wrapper.classList.add("pdf-wrapper");
             let icon = document.createElement("i");
             icon.classList.add("bx", "bxs-file-blank", "pdf-icon");
             let p1 = document.createElement("p");
@@ -42,12 +74,21 @@ async function getfiles(){
             new_div.appendChild(p1);
             new_div.appendChild(p2);
             let pdfs_list = document.querySelector(".pdfs-list");
-            pdfs_list.appendChild(new_div);
+            let loaded_icon_div = document.createElement("div");
+            let loaded_icon = document.createElement("i");
+            loaded_icon_div.classList.add("loaded-icon");
+            loaded_icon.classList.add("bx", "bxs-check-square");
+            loaded_icon_div.appendChild(loaded_icon);
+            new_div_wrapper.appendChild(loaded_icon_div);
+            new_div_wrapper.appendChild(new_div);
+            pdfs_list.appendChild(new_div_wrapper);
             uploaded_pdfs.push(file);
         }
         else if (file.fileType == "csv/xlsx") {
             let new_div = document.createElement("div");
+            let new_div_wrapper = document.createElement("div");
             new_div.classList.add("csv");
+            new_div_wrapper.classList.add("csv-wrapper");
             let icon = document.createElement("i");
             icon.classList.add("bx", "bxs-file-blank", "csv-icon");
             let p1 = document.createElement("p");
@@ -58,12 +99,21 @@ async function getfiles(){
             new_div.appendChild(p1);
             new_div.appendChild(p2);
             let csvs_list = document.querySelector(".csvs-list");
-            csvs_list.appendChild(new_div);
+            let loaded_icon_div = document.createElement("div");
+            let loaded_icon = document.createElement("i");
+            loaded_icon_div.classList.add("loaded-icon");
+            loaded_icon.classList.add("bx", "bxs-check-square");
+            loaded_icon_div.appendChild(loaded_icon);
+            new_div_wrapper.appendChild(loaded_icon_div);
+            new_div_wrapper.appendChild(new_div);
+            csvs_list.appendChild(new_div_wrapper);
             uploaded_csvs.push(file);
         }
         else if (file.fileType == "db") {
             let new_div = document.createElement("div");
+            let new_div_wrapper = document.createElement("div");
             new_div.classList.add("db");
+            new_div_wrapper.classList.add("db-wrapper");
             let icon = document.createElement("i");
             icon.classList.add("bx", "bxs-file-blank", "db-icon");
             let p1 = document.createElement("p");
@@ -74,7 +124,14 @@ async function getfiles(){
             new_div.appendChild(p1);
             new_div.appendChild(p2);
             let dbs_list = document.querySelector(".dbs-list");
-            dbs_list.appendChild(new_div);
+            let loaded_icon_div = document.createElement("div");
+            let loaded_icon = document.createElement("i");
+            loaded_icon_div.classList.add("loaded-icon");
+            loaded_icon.classList.add("bx", "bxs-check-square");
+            loaded_icon_div.appendChild(loaded_icon);
+            new_div_wrapper.appendChild(loaded_icon_div);
+            new_div_wrapper.appendChild(new_div);
+            dbs_list.appendChild(new_div_wrapper);
             uploaded_dbs.push(file);
         }
     }
@@ -138,8 +195,9 @@ pdf_input.addEventListener("change", function(e) {
     }
     pdf_upload.appendChild(new_div);
 });
-pdf_button.addEventListener("click", function (e) {
+pdf_button.addEventListener("click", async function (e) {
     e.preventDefault();
+    uploading = true;
     let file = {"fileName": pdf_input.files[0].name, "fileDescription": pdf_description.value, "fileType": "pdf", "oldFileName": pdf_input.files[0].name};
     console.log(file);
 
@@ -151,7 +209,15 @@ pdf_button.addEventListener("click", function (e) {
     uploaded_pdfs.push(file);
 
     let new_div = document.createElement("div");
+    let new_div_wrapper = document.createElement("div");
+    let loading_div = document.createElement("div");
+    let loading_text = document.createElement("p");
     new_div.classList.add("pdf");
+    new_div_wrapper.classList.add("pdf-wrapper");
+    loading_div.classList.add("loading-div");
+    loading_text.classList.add("loading-text");
+    loading_text.textContent = "0%";
+    loading_div.appendChild(loading_text);
     let icon = document.createElement("i");
     icon.classList.add("bx", "bxs-file-blank", "pdf-icon");
     let p1 = document.createElement("p");
@@ -161,19 +227,22 @@ pdf_button.addEventListener("click", function (e) {
     new_div.appendChild(icon);
     new_div.appendChild(p1);
     new_div.appendChild(p2);
-    pdfs_list.appendChild(new_div);
+    new_div_wrapper.appendChild(loading_div);
+    new_div_wrapper.appendChild(new_div);
+    pdfs_list.appendChild(new_div_wrapper);
 
     let form_data = new FormData();
     form_data.append("files[]", pdf_input.files[0]);
     form_data.append("file", JSON.stringify(file));
-    let response = fetch("/upload_pdf", {
-        method: "POST",
-        body: form_data,
-    }).then(response => response.json()).then(data => {
-        return data;
-    }).catch(error => {
-        console.error("Error:", error);
-    });
+    let response = await makeRequest("POST", "/upload_pdf", form_data, loading_div, loading_text);
+
+    loading_div.remove();
+    let loaded_icon_div = document.createElement("div");
+    let loaded_icon = document.createElement("i");
+    loaded_icon_div.classList.add("loaded-icon");
+    loaded_icon.classList.add("bx", "bxs-check-square");
+    loaded_icon_div.appendChild(loaded_icon);
+    new_div_wrapper.prepend(loaded_icon_div);
 
     pdf_description.value = null;
     let pdf_selected_files = document.querySelectorAll(".pdf-selected-files");
@@ -181,6 +250,7 @@ pdf_button.addEventListener("click", function (e) {
         item.remove();
     });
     pdf_input.value = null;
+    uploading = false;
 })
 
 let csvs_list = document.querySelector(".csvs-list");   
@@ -213,8 +283,9 @@ csv_input.addEventListener("change", function(e) {
     }
     csv_upload.appendChild(new_div);
 });
-csv_button.addEventListener("click", function (e) {
+csv_button.addEventListener("click", async function (e) {
     e.preventDefault();
+    uploading = true;
     let file = {"fileName": csv_input.files[0].name, "fileDescription": csv_description.value, "fileType": "csv/xlsx", "oldFileName": csv_input.files[0].name};
     console.log(file);
 
@@ -226,7 +297,15 @@ csv_button.addEventListener("click", function (e) {
     uploaded_csvs.push(file);
 
     let new_div = document.createElement("div");
+    let new_div_wrapper = document.createElement("div");
+    let loading_div = document.createElement("div");
+    let loading_text = document.createElement("p");
     new_div.classList.add("csv");
+    new_div_wrapper.classList.add("csv-wrapper");
+    loading_div.classList.add("loading-div");
+    loading_text.classList.add("loading-text");
+    loading_text.textContent = "0%";
+    loading_div.appendChild(loading_text);
     let icon = document.createElement("i");
     icon.classList.add("bx", "bxs-file-blank", "csv-icon");
     let p1 = document.createElement("p");
@@ -236,19 +315,22 @@ csv_button.addEventListener("click", function (e) {
     new_div.appendChild(icon);
     new_div.appendChild(p1);
     new_div.appendChild(p2);
-    csvs_list.appendChild(new_div);
+    new_div_wrapper.appendChild(loading_div);
+    new_div_wrapper.appendChild(new_div);
+    csvs_list.appendChild(new_div_wrapper);
 
     let form_data = new FormData();
     form_data.append("files[]", csv_input.files[0]);
     form_data.append("file", JSON.stringify(file));
-    let response = fetch("/upload_csv", {
-        method: "POST",
-        body: form_data,
-    }).then(response => response.json()).then(data => {
-        return data;
-    }).catch(error => {
-        console.error("Error:", error);
-    });
+    let response = await makeRequest("POST", "/upload_csv", form_data, loading_div, loading_text);
+
+    loading_div.remove();
+    let loaded_icon_div = document.createElement("div");
+    let loaded_icon = document.createElement("i");
+    loaded_icon_div.classList.add("loaded-icon");
+    loaded_icon.classList.add("bx", "bxs-check-square");
+    loaded_icon_div.appendChild(loaded_icon);
+    new_div_wrapper.prepend(loaded_icon_div);
 
     csv_description.value = null;
     let csv_selected_files = document.querySelectorAll(".csv-selected-files");
@@ -256,6 +338,7 @@ csv_button.addEventListener("click", function (e) {
         item.remove();
     });
     csv_input.value = null;
+    uploading = false;
 });
 
 let dbs_list = document.querySelector(".dbs-list");
@@ -288,8 +371,9 @@ db_input.addEventListener("change", function(e) {
     }
     db_upload.appendChild(new_div);
 });
-db_button.addEventListener("click", function (e) {
+db_button.addEventListener("click", async function (e) {
     e.preventDefault();
+    uploading = true;
     let file = {"fileName": db_input.files[0].name, "fileDescription": db_description.value, "fileType": "db", "oldFileName": db_input.files[0].name};
     console.log(file);
 
@@ -301,7 +385,15 @@ db_button.addEventListener("click", function (e) {
     uploaded_dbs.push(file);
 
     let new_div = document.createElement("div");
+    let new_div_wrapper = document.createElement("div");
+    let loading_div = document.createElement("div");
+    let loading_text = document.createElement("p");
     new_div.classList.add("db");
+    new_div_wrapper.classList.add("db-wrapper");
+    loading_div.classList.add("loading-div");
+    loading_text.classList.add("loading-text");
+    loading_text.textContent = "0%";
+    loading_div.appendChild(loading_text);
     let icon = document.createElement("i");
     icon.classList.add("bx", "bxs-file-blank", "db-icon");
     let p1 = document.createElement("p");
@@ -311,19 +403,22 @@ db_button.addEventListener("click", function (e) {
     new_div.appendChild(icon);
     new_div.appendChild(p1);
     new_div.appendChild(p2);
-    dbs_list.appendChild(new_div);
+    new_div_wrapper.appendChild(loading_div);
+    new_div_wrapper.appendChild(new_div);
+    dbs_list.appendChild(new_div_wrapper);
 
     let form_data = new FormData();
     form_data.append("files[]", db_input.files[0]);
     form_data.append("file", JSON.stringify(file));
-    let response = fetch("/upload_db", {
-        method: "POST",
-        body: form_data,
-    }).then(response => response.json()).then(data => {
-        return data;
-    }).catch(error => {
-        console.error("Error:", error);
-    });
+    let response = await makeRequest("POST", "/upload_db", form_data, loading_div, loading_text);
+
+    loading_div.remove();
+    let loaded_icon_div = document.createElement("div");
+    let loaded_icon = document.createElement("i");
+    loaded_icon_div.classList.add("loaded-icon");
+    loaded_icon.classList.add("bx", "bxs-check-square");
+    loaded_icon_div.appendChild(loaded_icon);
+    new_div_wrapper.prepend(loaded_icon_div);
 
     db_description.value = null;
     let db_selected_files = document.querySelectorAll(".db-selected-files");
@@ -331,11 +426,20 @@ db_button.addEventListener("click", function (e) {
         item.remove();
     });
     db_input.value = null;
+    uploading = false;
 });
 
 let prepare_button = document.querySelector(".prepare-button");
 prepare_button.addEventListener("click", async function (e) {
     e.preventDefault();
+
+    if(uploading== true){
+        let overlay = document.querySelector("#uploading-overlay");
+        let popup = document.querySelector("#uploading-popup");
+        overlay.style.display = "block";
+        popup.style.display = "block";
+        return;
+    }
 
     let overlay = document.querySelector("#overlay");
     let popup = document.querySelector("#popup");
@@ -379,5 +483,15 @@ popup_button.addEventListener("click", function(e) {
 
     let popup_button = document.querySelector(".popup-button");
     popup_button.style.display = "none";
+})
+
+let uploading_popup_button = document.querySelector(".uploading-popup-button");
+uploading_popup_button.addEventListener("click", function(e) {
+    e.preventDefault();
+
+    let overlay = document.querySelector("#uploading-overlay");
+    let popup = document.querySelector("#uploading-popup");
+    overlay.style.display = "none";
+    popup.style.display = "none";
 })
 
