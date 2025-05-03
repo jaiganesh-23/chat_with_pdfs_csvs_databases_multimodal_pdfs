@@ -213,11 +213,11 @@ def tool"""+f"""{index}"""+f"""(query: str) -> str:
     rag_tool = InitRAGTool(
         embedding_model="mistral-embed",
         vectordb_dir=here(f"vectordbs/{file['fileName']}"),
-        k=2,
+        k=5,
         collection_name=f"{file['fileName']}-chroma"
     )
     multimodal_rag_tool = LoadMultiModalRAG(doc_dir=here(f"downloads/pdfs/{file['fileName']}"), filename="{file['fileName']}")
-    docs = rag_tool.vectordb.similarity_search(query, k=2)
+    docs = rag_tool.vectordb.similarity_search(query, k=5)
     rag_tool_result = "\\n\\n".join([doc.page_content for doc in docs])
     multimodal_rag_tool_result = multimodal_rag_tool.chain_with_sources.invoke(query)
     final_result = multimodal_rag_tool_result['response'] + "\\n\\n\\n\\n" + rag_tool_result
