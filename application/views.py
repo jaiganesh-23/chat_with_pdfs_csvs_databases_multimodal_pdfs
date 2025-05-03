@@ -188,8 +188,8 @@ def tool"""+f"""{index}"""+f"""(query: str) -> str:
         if file["fileType"] == "pdf":
             preparedb_instance = PrepareVectorDB(
                 doc_dir=here(f"downloads/pdfs/{file['fileName']}"),
-                chunk_size=50,
-                chunk_overlap=10,
+                chunk_size=500,
+                chunk_overlap=100,
                 embedding_model="mistral-embed",
                 vectordb_dir=here(f"vectordbs/{file['fileName']}"),
                 collection_name=f"{file['fileName']}-chroma",
@@ -213,11 +213,11 @@ def tool"""+f"""{index}"""+f"""(query: str) -> str:
     rag_tool = InitRAGTool(
         embedding_model="mistral-embed",
         vectordb_dir=here(f"vectordbs/{file['fileName']}"),
-        k=20,
+        k=2,
         collection_name=f"{file['fileName']}-chroma"
     )
     multimodal_rag_tool = LoadMultiModalRAG(doc_dir=here(f"downloads/pdfs/{file['fileName']}"), filename="{file['fileName']}")
-    docs = rag_tool.vectordb.similarity_search(query, k=20)
+    docs = rag_tool.vectordb.similarity_search(query, k=2)
     rag_tool_result = "\\n\\n".join([doc.page_content for doc in docs])
     multimodal_rag_tool_result = multimodal_rag_tool.chain_with_sources.invoke(query)
     final_result = multimodal_rag_tool_result['response'] + "\\n\\n\\n\\n" + rag_tool_result
