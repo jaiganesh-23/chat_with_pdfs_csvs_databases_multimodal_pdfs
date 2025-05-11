@@ -33,4 +33,4 @@ ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_RUN_PORT=5000
 
 # Run the application using Gunicorn with memory limit
-CMD ["gunicorn", "-w", "1", "-b", "0.0.0.0:5000", "--worker-tmp-dir", "/dev/shm", "main:app"]
+CMD ["python", "main.py"]
