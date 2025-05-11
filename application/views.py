@@ -196,6 +196,7 @@ def tool"""+f"""{index}"""+f"""(query: str) -> str:
                 doc_name=file["fileName"]
             )
             preparedb_instance.run()
+            time.sleep(5)
             InitMultiModalRAG(doc_dir=here(f"downloads/pdfs/{file['fileName']}"), filename=file['fileName'])
             func_string = f"""
 from langchain_core.tools import tool
@@ -225,6 +226,7 @@ def tool"""+f"""{index}"""+f"""(query: str) -> str:
             code = compile(func_string, "<string>","exec")
             code_namespace = {"__name__": "__main__"}
             exec(code, code_namespace)
+            time.sleep(5)
             agent_tools.append(code_namespace["tool"+f"{index}"])
 
         if file["fileType"] == "csv/xlsx":
