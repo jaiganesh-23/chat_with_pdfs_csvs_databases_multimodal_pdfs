@@ -39,7 +39,7 @@ class PrepareVectorDB:
             vectordb = Chroma.from_documents(
                 documents=doc_splits,
                 collection_name=self.collection_name,
-                embedding=MistralAIEmbeddings(model=self.embedding_model, api_key=os.getenv("MISTRAL_API_KEY")),
+                embedding=MistralAIEmbeddings(model=self.embedding_model, api_key=str(os.getenv("MISTRAL_API_KEY"))),
                 persist_directory=str(self.vectordb_dir), 
             )
             print(f"vector db for {self.doc_name} is created")
@@ -55,7 +55,7 @@ class InitRAGTool:
         self.k = k
         self.collection_name = collection_name
         self.vectordb = Chroma(
-            embedding_function=MistralAIEmbeddings(model=self.embedding_model, api_key=os.getenv("MISTRAL_API_KEY")),
+            embedding_function=MistralAIEmbeddings(model=self.embedding_model, api_key=str(os.getenv("MISTRAL_API_KEY"))),
             persist_directory=str(self.vectordb_dir),
             collection_name=self.collection_name,
         )
