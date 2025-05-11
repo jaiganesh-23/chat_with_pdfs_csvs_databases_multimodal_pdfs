@@ -114,7 +114,7 @@ class InitMultiModalRAG:
 
             # The vectorstore to use to index the child chunks
             vectorstore = Chroma(collection_name="multi_modal_rag",
-                                    embedding_function=MistralAIEmbeddings(model="mistral-embed", api_key=os.getenv("MISTRALAI_API_KEY")),
+                                    embedding_function=MistralAIEmbeddings(model="mistral-embed", api_key=str(os.getenv("MISTRALAI_API_KEY"))),
                                     persist_directory= str(here(f"stores/vectorstores/{self.filename}"))
                                 )
             # The storage layer for the parent documents
@@ -174,7 +174,7 @@ class LoadMultiModalRAG:
         print("started multimodal rag")
         vectorstore = Chroma(
             collection_name="multi_modal_rag",
-            embedding_function=MistralAIEmbeddings(model="mistral-embed", api_key=os.getenv("MISTRALAI_API_KEY")),
+            embedding_function=MistralAIEmbeddings(model="mistral-embed", api_key=str(os.getenv("MISTRALAI_API_KEY"))),
             persist_directory=str(here(f"stores/vectorstores/{self.filename}"))
         )
 
