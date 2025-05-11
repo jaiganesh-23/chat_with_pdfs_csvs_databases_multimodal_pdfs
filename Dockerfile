@@ -4,9 +4,11 @@ FROM python:3.10-slim
 # Set the working directory in the container
 WORKDIR /app
 
-RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 -y
-# Install system dependencies for poppler and tesseract-ocr
+# Update and install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
     poppler-utils \
     tesseract-ocr \
     tesseract-ocr-eng \
